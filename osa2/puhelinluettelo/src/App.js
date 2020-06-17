@@ -41,19 +41,19 @@ const App = () => {
                     .then(returnedPerson => {
                         setPeople(people.map(p => p.id !== found.id ? p : returnedPerson))
                         setMessage(`${found.name}'s number updated`)
-                setTimeout(() => {
-                    setMessage(null)
-                }, 5000)
+                        setTimeout(() => {
+                            setMessage(null)
+                        }, 5000)
                     })
-                    .catch(error => {      
-                        setErrorMessage(`Information of ${found.name} was already removed from server.` ) 
+                    .catch(error => {
+                        setErrorMessage(`Information of ${found.name} was already removed from server.`)
                         setTimeout(() => {
                             setErrorMessage(null)
                         }, 5000)
-                            setPeople(people.filter(p => p.id !== found.id))    
-                        })
-                
-                
+                        setPeople(people.filter(p => p.id !== found.id))
+                    })
+
+
             }
         } else {
             const personObject = {
@@ -64,11 +64,18 @@ const App = () => {
                 .create(personObject)
                 .then(returnedPerson => {
                     setPeople(people.concat(returnedPerson))
+                    setMessage(`${personObject.name} added to phonebook`)
+                    setTimeout(() => {
+                        setMessage(null)
+                    }, 5000)
                 })
-            setMessage(`${personObject.name} added to phonebook`)
-            setTimeout(() => {
-                setMessage(null)
-            }, 5000)
+                .catch(error => {
+                    setErrorMessage(error.response.data.error)
+                    setTimeout(() => {
+                        setErrorMessage(null)
+                    }, 5000)
+                })
+
         }
         setNewName('')
         setNewNumber('')
