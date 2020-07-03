@@ -20,28 +20,20 @@ const favoriteBlog = (blogs) => {
     return blogs.find(blog => blog.likes === mostLikes)
 }
 
-const groupByAuthor2 = (blogs) => {
-    return _.chain(blogs)
-        .groupBy("author")
-        .map((value, key) => ({ author: key, likes: totalLikes(value) }))
-        .value()
-}
-
 const mostBlogs = (blogs) => {
     return _.chain(blogs)
-    .groupBy("author")
-    .map((value, key) => ({ author: key, blogs: value.length }))
-    .maxBy("blogs")
-    .value()
+        .groupBy("author")
+        .map((value, key) => ({ author: key, blogs: value.length }))
+        .maxBy("blogs")
+        .value()
 }
 
 const mostLikes = (blogs) => {
     return _.chain(blogs)
-    .groupBy("author")
-    .map((value, key) => ({ author: key, likes: totalLikes(value) }))
-    .maxBy("likes")
-    .value()
-    //return _.maxBy(groupByAuthor2(blogs), "likes")
+        .groupBy("author")
+        .map((value, key) => ({ author: key, likes: totalLikes(value) }))
+        .maxBy("likes")
+        .value()
 }
 
 module.exports = {

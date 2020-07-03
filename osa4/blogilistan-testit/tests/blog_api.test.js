@@ -67,7 +67,37 @@ test('blog with undefined likes has zero likes', async () => {
 
   const blogsAtEnd = await helper.blogsInDb()
 
-expect(blogsAtEnd[blogsAtEnd.length-1].likes).toEqual(0)
+  expect(blogsAtEnd[blogsAtEnd.length - 1].likes).toEqual(0)
+
+})
+
+test('blog without title is not added', async () => {
+  const blog = {
+    _id: "5a422bc61b54a676234d17fc",
+    author: "Robert C. Martin",
+    url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html",
+    likes: 2,
+    __v: 0
+  }
+  await api
+    .post('/api/blogs')
+    .send(blog)
+    .expect(400)
+
+})
+
+test('blog without url is not added', async () => {
+  const blog = {
+    _id: "5a422bc61b54a676234d17fc",
+    title: "Type wars",
+    author: "Robert C. Martin",
+    likes: 2,
+    __v: 0
+  }
+  await api
+    .post('/api/blogs')
+    .send(blog)
+    .expect(400)
 
 })
 
