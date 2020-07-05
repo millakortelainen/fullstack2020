@@ -1,9 +1,11 @@
 const mongoose = require('mongoose')
 const supertest = require('supertest')
+const bcrypt = require('bcrypt')
 const app = require('../app')
 const api = supertest(app)
 const helper = require('./test_helper')
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 beforeEach(async () => {
   await Blog.deleteMany({})
@@ -40,8 +42,16 @@ test('a valid blog can be added', async () => {
     __v: 0
   }
 
+  const inf = await api
+    .post('/api/login')
+    .send({
+      username: 'mluukkai',
+      password: 'salainen'
+    })
+
   await api
     .post('/api/blogs')
+    .set('Authorization', `bearer ${inf.body.token}`)
     .send(newBlog)
     .expect(200)
     .expect('Content-Type', /application\/json/)
@@ -59,8 +69,16 @@ test('blog with undefined likes has zero likes', async () => {
     __v: 0
   }
 
+  const inf = await api
+    .post('/api/login')
+    .send({
+      username: 'mluukkai',
+      password: 'salainen'
+    })
+
   await api
     .post('/api/blogs')
+    .set('Authorization', `bearer ${inf.body.token}`)
     .send(newBlog)
     .expect(200)
     .expect('Content-Type', /application\/json/)
@@ -79,8 +97,17 @@ test('blog without title is not added', async () => {
     likes: 2,
     __v: 0
   }
+
+  const inf = await api
+    .post('/api/login')
+    .send({
+      username: 'mluukkai',
+      password: 'salainen'
+    })
+
   await api
     .post('/api/blogs')
+    .set('Authorization', `bearer ${inf.body.token}`)
     .send(blog)
     .expect(400)
 
@@ -94,11 +121,53 @@ test('blog without url is not added', async () => {
     likes: 2,
     __v: 0
   }
+
+  const inf = await api
+    .post('/api/login')
+    .send({
+      username: 'mluukkai',
+      password: 'salainen'
+    })
+
   await api
     .post('/api/blogs')
+    .set('Authorization', `bearer ${inf.body.token}`)
     .send(blog)
     .expect(400)
 
+})
+
+test('blog is removed', async () => {
+
+  const inf = await api
+    .post('/api/login')
+    .send({
+      username: 'mluukkai',
+      password: 'salainen'
+    })
+
+  const newBlog = {
+    _id: "5a422b891b54a676234d17fa",
+    title: "First class tests",
+    author: "Robert C. Martin",
+    url: "http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.htmll",
+    likes: 10,
+    __v: 0
+  }
+
+  const blogToDelete = await api
+    .post('/api/blogs')
+    .set('Authorization', `bearer ${inf.body.token}`)
+    .send(newBlog)
+
+
+  await api
+    .delete(`/api/blogs/${blogToDelete.body.id}`)
+    .set('Authorization', `bearer ${inf.body.token}`)
+    .expect(204)
+  console.log(helper.blogsInDb())
+  const blogsAtEnd = await helper.blogsInDb()
+  expect(blogsAtEnd.length).toBe(helper.initialBlogs.length)
 })
 
 afterAll(() => {
