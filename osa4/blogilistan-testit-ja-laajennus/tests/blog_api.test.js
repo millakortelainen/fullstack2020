@@ -170,6 +170,21 @@ test('blog is removed', async () => {
   expect(blogsAtEnd.length).toBe(helper.initialBlogs.length)
 })
 
+test('a blog can be edited', async () => {
+  const [ aBlog ] = await helper.blogsInDb()
+
+  const editedBlog = { ...aBlog, likes: aBlog.likes + 1 }
+
+  await api
+    .put(`/api/blogs/${aBlog.id}`)
+    .send(editedBlog)
+    .expect(200)
+
+  const blogsAtEnd = await helper.blogsInDb()
+  const edited = blogsAtEnd.find(b => b.url === aBlog.url)
+  expect(edited.likes).toBe(aBlog.likes + 1)
+})
+
 afterAll(() => {
   mongoose.connection.close()
 })
