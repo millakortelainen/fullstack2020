@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-//import React, { useState, useRef } from 'react'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
@@ -55,7 +54,7 @@ const App = () => {
     }
   }
 
-  const handleLogOut = (event) => {
+  const handleLogOut = () => {
     window.localStorage.clear()
   }
 
@@ -84,17 +83,18 @@ const App = () => {
         setBlogs(blogs.map(blog => blog.id !== id ? blog : returnedBlog))
       })
       .catch(error => {
-        console.log("updating error")
+        console.log(`updating error ${error}`)
       })
   }
 
   const removeBlog = (id) => {
     const result = window.confirm(`Delete ${blogs.find(b => b.id === id).title}?`)
     if (result) {
-      blogService.remove(id)
-      .catch(error => {
-        console.log("wrong person")
-      })
+      blogService
+        .remove(id)
+        .catch(error => {
+          console.log(`wrong person ${error}`)
+        })
       setBlogs(blogs.filter(blog => blog.id !== id))
 
     }
@@ -109,7 +109,7 @@ const App = () => {
           <form onSubmit={handleLogin}>
             <div>
               username
-          <input
+              <input
                 type="text"
                 value={username}
                 name="Username"
@@ -118,7 +118,7 @@ const App = () => {
             </div>
             <div>
               password
-          <input
+              <input
                 type="password"
                 value={password}
                 name="Password"
