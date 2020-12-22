@@ -8,10 +8,14 @@ const notificationReducer = (state = '', action) => {
   }
 }
 
+let timer = null
 
 export const setNotification = (message, time) => {
   return async dispatch => {
-    setTimeout(() => {
+    if (timer) {
+      clearTimeout(timer)
+    }
+    timer = setTimeout(() => {
       dispatch(resetNotification())
     }, time * 1000)
     dispatch({

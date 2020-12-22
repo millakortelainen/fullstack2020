@@ -13,7 +13,7 @@ export const setNotification = (message, time) => {
   return async dispatch => {
     setTimeout(() => {
       dispatch(resetNotification())
-    }, time)
+    }, time * 1000)
     dispatch({
       type: 'SHOW_NOTIFICATION',
       data: message
